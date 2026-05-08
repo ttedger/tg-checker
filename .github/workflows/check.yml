@@ -1,0 +1,40 @@
+name: TG Username Checker
+
+on:
+  workflow_dispatch:
+    inputs:
+      chunk:
+        description: 'Which chunk to check (1-6)'
+        required: true
+        default: '1'
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 350
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+
+      - name: Install deps
+        run: pip install telethon
+
+      - name: Run checker
+        env:
+          API_ID: ${{ secrets.API_ID }}
+          API_HASH: ${{ secrets.API_HASH }}
+          SESSION: ${{ secrets.SESSION }}
+          CHUNK: ${{ github.event.inputs.chunk }}
+        run: python3 checker.py
+
+      - name: Upload results
+        uses: actions/upload-artifact@v3
+        if: always()
+        with:
+          name: available-chunk-${{ github.event.inputs.chunk }}
+          path: available_${{ github.event.inputs.chunk }}.txt
