@@ -32,7 +32,7 @@ jobs:
           CHUNK: ${{ github.event.inputs.chunk }}
         run: python3 checker.py
 
-     - name: Upload results
+      - name: Upload results
         uses: actions/upload-artifact@v4
         if: always()
         with:
